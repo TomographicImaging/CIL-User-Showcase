@@ -5,6 +5,7 @@
 ## Checklist when you are ready to request a review
 
 - [ ] I have performed a self-review of my code
+- [ ] I have created a new folder, containing my contributions which are in the form of jupyter notebooks, with any necessary supporting python files, and a LICENSE file.
 - [ ] I have added a description of my contribution(s) to the top of my file(s)
 - [ ] If publicly available, I have added a link to the dataset used near the top of my file(s)
 - [ ] I have added the CIL version I ran with near the top of my file(s)
