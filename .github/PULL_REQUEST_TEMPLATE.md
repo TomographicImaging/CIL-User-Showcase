@@ -15,4 +15,4 @@
 - [ ] Change pull request label to 'Waiting for review' 
 
 Note: for an example of a contribution, where a license header, description, data link and CIL version has been added, please
-see: [example_contribution.ipynb](https://github.com/TomographicImaging/CIL-User-Showcase/blob/main/example_contribution.ipynb)
+see: [example_contribution](https://github.com/TomographicImaging/CIL-User-Showcase/blob/main/example_contribution)
