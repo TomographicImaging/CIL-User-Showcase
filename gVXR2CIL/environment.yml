@@ -1,0 +1,63 @@
+name: gVXR2CIL
+channels:
+    - conda-forge
+    - ccpi
+    - intel
+dependencies:
+    - python=3.10.5
+    # - scikit-build
+    - jupyter_client=7.3.4
+    - jupyter_core=4.10.0
+    - jupyter_server=1.18.0
+    - jupyterlab=3.4.3
+    - jupyterlab_pygments=0.2.2
+    - jupyterlab_server=2.14.0
+    - jupyterlab_widgets=1.1.1
+    - notebook=6.4.12
+    - nb_conda_kernels
+    - ipympl=0.9.1
+    - ipywidgets=7.7.1
+    - matplotlib
+    - xraylib
+    # - scipy
+    # - pillow
+    # - tifffile
+    - scikit-image
+    - k3d=2.14.5
+    - pyppeteer
+    - nbconvert
+    - cil
+    - tigre
+#- opencv
+    #- cma
+    #- tomopy
+    #- numpy
+    #- libtiff
+    #- pandas
+    #- ipykernel
+    #- ipython
+    - vtk
+    #- jupyterlab
+    #- pandas
+    #- scikit-learn
+    #- imageio
+    - SimpleITK
+    #- k3d
+    #- numpy-stl
+    #- gputil
+    #- plotly
+    #- jupyterlab>=3
+    #- ipywidgets>=7.6
+    #- python-kaleido
+    # - ninja
+    - pip
+    - pip:
+        - xpecgen
+    #    - gatetools
+        - gvxr
+    #    - tabletext
+    #    - viewscad
+    #    - spekpy
+    #    - py-cpuinfo
+    #    - pymoo
+    #    - chart_studio
