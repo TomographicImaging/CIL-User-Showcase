@@ -26,7 +26,7 @@ dependencies:
     - k3d=2.14.5
     - pyppeteer
     - nbconvert
-    - cil
+    - cil==23.0.1
     - tigre
 #- opencv
     #- cma
