@@ -42,12 +42,12 @@ def deriv2(n ,example=1):
     t = 2 / 3
     A = np.zeros((n,n))
     # Compute the matrix A.
-    for i in np.arange(1,n).reshape(-1):
+    for i in np.arange(0,n).reshape(-1):
         A[i,i] = h2 * ((i ** 2 - i + 0.25) * h - (i - t))
-        for j in np.arange(1,i - 1+1).reshape(-1):
+        for j in np.arange(0,i).reshape(-1):
             A[i,j] = h2 * (j - 0.5) * ((i - 0.5) * h - 1)
     
-    A = A + np.transpose(np.tril(A,- 1))
+    A = A + np.transpose(np.tril(A,-1))
     # Compute the right-hand side vector b.
 #  if ( 1):
 #      b = np.zeros((n,1))
