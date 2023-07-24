@@ -82,7 +82,7 @@ def deriv2(n ,example=1):
     x = np.zeros((n,1))
     if (example == 1):
             for i in np.arange(1,n).reshape(-1):
-                x[i] = h32 * (i - 0.5)
+                x[i] = h * (i )
     else:
             if (example == 2):
                 for i in np.arange(1,n).reshape(-1):
