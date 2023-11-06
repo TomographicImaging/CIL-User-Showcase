@@ -54,7 +54,7 @@ dependencies:
     - pip:
         - xpecgen
     #    - gatetools
-        - gvxr
+        - gvxr>=2.0.7
     #    - tabletext
     #    - viewscad
     #    - spekpy
