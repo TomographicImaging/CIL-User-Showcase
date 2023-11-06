@@ -1,0 +1,5 @@
+.ipynb_checkpoints/
+__pycache__/
+input_data/
+output/
+raw_projections/
