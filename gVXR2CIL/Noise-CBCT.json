@@ -2,7 +2,7 @@
     "WindowSize": [800, 450],
 
     "Detector": {
-        "Position": [0.0, -150.0, 0.0, "mm"],        
+        "Position": [0.0, -150.0, 0.0, "mm"],
         "UpVector": [0, 0, -1],
         "NumberOfPixels": [512, 512],
         "Size": [500, 500, "mm"],
@@ -33,7 +33,7 @@
     "Samples": [
         {
             "Label": "Muscle",
-            "Path": "meshes/Muscle.stl",
+            "Path": "input_data/meshes/Muscle.stl",
             "Unit": "mm",
             "Material": ["Mixture", [
                     1, 0.102,
@@ -53,7 +53,7 @@
 
         {
             "Label": "Bone",
-            "Path": "meshes/Bone.stl",
+            "Path": "input_data/meshes/Bone.stl",
             "Unit": "mm",
             "Material": ["Mixture", [
                     1, 0.040,
@@ -73,7 +73,7 @@
 
         {
             "Label": "Stomach-Interior",
-            "Path": "meshes/Stomach-Interior.stl",
+            "Path": "input_data/meshes/Stomach-Interior.stl",
             "Unit": "mm",
             "Material": ["Mixture", [
                     1, 0.106,
@@ -93,7 +93,7 @@
 
         {
             "Label": "Cartilage",
-            "Path": "meshes/Cartilage.stl",
+            "Path": "input_data/meshes/Cartilage.stl",
             "Unit": "mm",
             "Material": ["Mixture", [
                     1, 0.096,
@@ -112,7 +112,7 @@
 
         {
             "Label": "Brain",
-            "Path": "meshes/Brain.stl",
+            "Path": "input_data/meshes/Brain.stl",
             "Unit": "mm",
             "Material": ["Mixture", [
                     1, 0.107,
@@ -132,7 +132,7 @@
 
         {
             "Label": "Bladder",
-            "Path": "meshes/Bladder.stl",
+            "Path": "input_data/meshes/Bladder.stl",
             "Unit": "mm",
             "Material": ["Mixture", [
                     1, 0.105,
@@ -152,7 +152,7 @@
 
         {
             "Label": "Gallbladder",
-            "Path": "meshes/Gallbladder.stl",
+            "Path": "input_data/meshes/Gallbladder.stl",
             "Unit": "mm",
             "Material": ["Mixture", [
                     1, 0.105,
@@ -172,7 +172,7 @@
 
         {
             "Label": "Heart",
-            "Path": "meshes/Heart.stl",
+            "Path": "input_data/meshes/Heart.stl",
             "Unit": "mm",
             "Material": ["Mixture", [
                     1, 0.104,
@@ -192,7 +192,7 @@
 
         {
             "Label": "Kidneys-right",
-            "Path": "meshes/Kidneys-right.stl",
+            "Path": "input_data/meshes/Kidneys-right.stl",
             "Unit": "mm",
             "Material": ["Mixture", [
                     1, 0.103,
@@ -213,7 +213,7 @@
 
         {
             "Label": "Kidneys-left",
-            "Path": "meshes/Kidneys-left.stl",
+            "Path": "input_data/meshes/Kidneys-left.stl",
             "Unit": "mm",
             "Material": ["Mixture", [
                     1, 0.103,
@@ -234,7 +234,7 @@
 
         {
             "Label": "Small-Intestine",
-            "Path": "meshes/Small-Intestine.stl",
+            "Path": "input_data/meshes/Small-Intestine.stl",
             "Unit": "mm",
             "Material": ["Mixture", [
                     1, 0.106,
@@ -254,7 +254,7 @@
 
         {
             "Label": "Large-Intestine",
-            "Path": "meshes/Large-Intestine.stl",
+            "Path": "input_data/meshes/Large-Intestine.stl",
             "Unit": "mm",
             "Material": ["Mixture", [
                     1, 0.106,
@@ -274,7 +274,7 @@
 
         {
             "Label": "Liver",
-            "Path": "meshes/Liver.stl",
+            "Path": "input_data/meshes/Liver.stl",
             "Unit": "mm",
             "Material": ["Mixture", [
                     1, 0.103,
@@ -294,7 +294,7 @@
 
         {
             "Label": "Lung-right",
-            "Path": "meshes/Lung-right.stl",
+            "Path": "input_data/meshes/Lung-right.stl",
             "Unit": "mm",
             "Material": ["Mixture", [
                     1, 0.103,
@@ -314,7 +314,7 @@
 
         {
             "Label": "Lung-left",
-            "Path": "meshes/Lung-left.stl",
+            "Path": "input_data/meshes/Lung-left.stl",
             "Unit": "mm",
             "Material": ["Mixture", [
                     1, 0.103,
@@ -334,7 +334,7 @@
 
         {
             "Label": "Pancreas",
-            "Path": "meshes/Pancreas.stl",
+            "Path": "input_data/meshes/Pancreas.stl",
             "Unit": "mm",
             "Material": ["Mixture", [
                     1, 0.106,
@@ -354,7 +354,7 @@
 
         {
             "Label": "Spleen",
-            "Path": "meshes/Spleen.stl",
+            "Path": "input_data/meshes/Spleen.stl",
             "Unit": "mm",
             "Material": ["Mixture", [
                     1, 0.103,
@@ -374,7 +374,7 @@
 
         {
             "Label": "Stomach",
-            "Path": "meshes/Stomach.stl",
+            "Path": "input_data/meshes/Stomach.stl",
             "Unit": "mm",
             "Material": ["Mixture", [
                     1, 0.106,
@@ -394,7 +394,7 @@
 
         {
             "Label": "Thymus",
-            "Path": "meshes/Thymus.stl",
+            "Path": "input_data/meshes/Thymus.stl",
             "Unit": "mm",
             "Material": ["Mixture", [
                     1, 0.105,
@@ -414,7 +414,7 @@
 
         {
             "Label": "Eyes-right",
-            "Path": "meshes/Eyes-right.stl",
+            "Path": "input_data/meshes/Eyes-right.stl",
             "Unit": "mm",
             "Material": ["Mixture", [
                     1, 0.096,
@@ -433,7 +433,7 @@
 
         {
             "Label": "Eyes-left",
-            "Path": "meshes/Eyes-left.stl",
+            "Path": "input_data/meshes/Eyes-left.stl",
             "Unit": "mm",
             "Material": ["Mixture", [
                     1, 0.096,
@@ -452,7 +452,7 @@
 
         {
             "Label": "Skull",
-            "Path": "meshes/Skull.stl",
+            "Path": "input_data/meshes/Skull.stl",
             "Unit": "mm",
             "Material": ["Mixture", [
                     1, 0.040,
@@ -472,7 +472,7 @@
 
         {
             "Label": "Trachea",
-            "Path": "meshes/Trachea.stl",
+            "Path": "input_data/meshes/Trachea.stl",
             "Unit": "mm",
             "Material": ["Mixture", [
                     1, 0.105,
