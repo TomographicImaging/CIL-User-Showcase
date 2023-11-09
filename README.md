@@ -17,4 +17,4 @@ When your contributions are ready, open a pull request for the CIL developer tea
 
 The CIL developer team will then review your contribution and may ask for small changes or push some small changes to your fork.
 
-If you have any questions or want to find out more then please join the [CIL community on Discord](https://discord.com/invite/9NTWu9MEGq). 
+If you wish to contribute a notebook, have any questions or want to find out more then please join the [CIL community on Discord](https://discord.com/invite/9NTWu9MEGq). 
