@@ -7,7 +7,7 @@
         "NumberOfPixels": [512, 512],
         "Size": [500, 500, "mm"],
         "Energy response": {
-            "File": "energyResponseDetector.txt",
+            "File": "input_data/energyResponseDetector.txt",
             "Energy": "MeV"
         }
     },
@@ -16,7 +16,7 @@
         "Position": [0.0, 1000.0, 0.0, "mm"],
         "Shape": "PointSource",
         "Beam": {
-            "TextFile": "spectrum85kV.txt",
+            "TextFile": "input_data/spectrum85kV.txt",
             "Unit": "MeV"
         }
     },
@@ -24,7 +24,6 @@
     "Scan": {
         "CenterOfRotation": [0, 0, 0],
         "FinalAngle": 360,
-        "GifPath": "visualisation.gif",
         "IncludeFinalAngle": true,
         "NumberOfProjections": 600,
         "OutFolder": "raw_projections"
