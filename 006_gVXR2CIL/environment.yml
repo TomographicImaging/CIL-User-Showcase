@@ -1,0 +1,33 @@
+name: gVXR2CIL
+channels:
+    - conda-forge
+    - ccpi
+    - intel
+dependencies:
+    - python=3.10.5
+    - jupyter_client=7.3.4
+    - jupyter_core=4.10.0
+    - jupyter_server=1.18.0
+    - jupyterlab=3.4.3
+    - jupyterlab_pygments=0.2.2
+    - jupyterlab_server=2.14.0
+    - jupyterlab_widgets=1.1.1
+    - notebook=6.4.12
+    - nb_conda_kernels
+    - ipympl=0.9.1
+    - ipywidgets=7.7.1
+    - matplotlib
+    - xraylib
+    - scikit-image
+    - k3d=2.14.5
+    - pyppeteer
+    - nbconvert
+    - cil==23.0.1
+    - tigre
+    - vtk
+    - SimpleITK
+    - pip
+    - pip:
+        - xpecgen
+        - gvxr>=2.0.7
+
