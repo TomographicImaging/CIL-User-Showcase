@@ -145,7 +145,7 @@ def get_scanparams(logfile):
         return scanparams
         
 
-def get_filelist(datadir,dataset_prefix,num_digits=8):
+def get_filelist(datadir,dataset_prefix,num_digits=8, extension='tif'):
     """
     Retrieves a sorted list of file paths matching a specific pattern.
 
@@ -153,11 +153,12 @@ def get_filelist(datadir,dataset_prefix,num_digits=8):
         datadir (str): Directory path where the files are located.
         dataset_prefix (str): Prefix for the dataset filenames.
         num_digits (int, optional): Number of digits in the numeric part of the filenames (default is 8).
+        extension (str): File extension (default is 'tif').
 
     Returns:
         List[str]: A sorted list of file paths matching the specified pattern.
     """
-    return sorted(glob.glob(datadir+'/'+dataset_prefix+('[0-9]' * num_digits)+'.tif'))
+    return sorted(glob.glob(datadir+'/'+dataset_prefix+('[0-9]' * num_digits)+'.'+extension))
 
 
 
