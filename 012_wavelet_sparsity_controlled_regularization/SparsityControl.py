@@ -1,6 +1,3 @@
-#
-#  Authored by:    Tommi Heikkilä (LUT)
-#  
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
 #  You may obtain a copy of the License at
@@ -12,6 +9,9 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+#
+#  Authored by:    Tommi Heikkilä (LUT)
+#  Reviewed by:    Margaret Duff (STFC-UKRI)
 
 from cil.optimisation.utilities import callbacks
 from cil.optimisation.utilities.StepSizeMethods import StepSizeRule
@@ -20,8 +20,19 @@ import numpy as np
 
 class ControlledSparsity(StepSizeRule):
     """Controlled (Wavelet Domains) Sparsity update rule.
-    This only changes the regularization parameter for function `g`, NOT the step size! 
+    This only changes the regularization parameter for fnction `g`, NOT the step size! 
     The stopping criterion is given by `DesiredSparsity` callback.
+    
+    Parameters
+    ----------
+    desired_sparsity : float between 0 and 1
+        The desired sparsity level, i.e. the ratio of "nonzero" coefficients in the wavelet domain
+    step_weight : float, optional
+        The weight for the step size update, default is 0.2
+    tol : float, optional
+        The tolerance defining the wavelet coeffients to be "nonzero", default is 1e-8
+    print_stuff : int, optional
+        The level of verbosity, default is 0
     
     Reference
     ---------
@@ -108,6 +119,17 @@ class DesiredSparsity(callbacks.Callback):
     """"Desired sparsity stopping rule, to halt the iteration when the desired sparsity
     level has been reached AND the relative change between consecutive iterates is small enough.
     This way the iterates have time to converge to the right regularization parameter value.
+    
+    Parameters
+    ----------
+    spar_tol : float, optional
+        The tolerance for the sparsity level to stop iterations, default is 5e-3
+    rel_change_tol : float, optional
+        The tolerance for the relative change between consecutive iterates to stop iterations , default is 1e-4
+    print_stuff : int, optional
+        The level of verbosity, default is 1
+    print_skip : int, optional
+        The interval for printing the current status, default is 5
     
     Reference
     ---------
