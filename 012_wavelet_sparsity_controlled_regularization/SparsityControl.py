@@ -11,7 +11,7 @@
 #  limitations under the License.
 #
 #  Authored by:    Tommi Heikkilä (LUT)
-#  Reviewed by:    Margaret Duff (STFC-UKRI)
+#  Reviewed by:    Margaret Duff (STFC-UKRI), Jakob Jørgensen (DTU)
 
 from cil.optimisation.utilities import callbacks
 from cil.optimisation.utilities.StepSizeMethods import StepSizeRule
