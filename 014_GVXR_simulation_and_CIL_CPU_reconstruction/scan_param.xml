@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScanDocuPara xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Geometrie>
+    <SourceDetectorDist>611.999</SourceDetectorDist>
+    <SourceObjectDist>37</SourceObjectDist>
+    <ObjectDetectorDist>574.999</ObjectDetectorDist>
+    <Slices>
+      <string>609.000mm, Measured, MeasuredAndReconstructed, Recon-Scale: min = -0.345, max = 0.713, Center-Offset: -1.101000</string>
+      <string>624.791mm, Measured, MeasuredAndReconstructed, Recon-Scale: min = -0.370, max = 0.638, Center-Offset: -1.006000</string>
+    </Slices>
+    <Magnification>16.540514</Magnification>
+  </Geometrie>
+  <PlugIns>
+    <XrayPlugIn>XrayPlugInWorX</XrayPlugIn>
+    <DetectorPlugIn>DetectorPlugInVarianHE</DetectorPlugIn>
+    <ManipulatorPlugIn>ManipulatorPlugInSimotion</ManipulatorPlugIn>
+    <ReconPlugIn>ReconPlugInCera</ReconPlugIn>
+  </PlugIns>
+  <Recon>
+    <ReconstructionMode>NormalCt-VerticalFov</ReconstructionMode>
+    <ProjectionCount>4700</ProjectionCount>
+    <ProjectionCountPer360deg>4700</ProjectionCountPer360deg>
+    <ProjectionDimX>3000</ProjectionDimX>
+    <ProjectionDimY>3000</ProjectionDimY>
+    <ProjectionPixelSizeX>0.139</ProjectionPixelSizeX>
+    <ProjectionPixelSizeY>0.139</ProjectionPixelSizeY>
+    <ProjectionCenterOffsetX>-1.006</ProjectionCenterOffsetX>
+    <ProjectionCenterOffsetY>0</ProjectionCenterOffsetY>
+    <ProjectionATilt>0</ProjectionATilt>
+    <ProjectionBTilt>3.8E-05</ProjectionBTilt>
+    <ProjectionCTilt>0</ProjectionCTilt>
+    <ProjectionDTilt>0</ProjectionDTilt>
+    <ProjectionETilt>0</ProjectionETilt>
+    <VolumeDimX>3008</VolumeDimX>
+    <VolumeDimY>3008</VolumeDimY>
+    <VolumeDimZ>1884</VolumeDimZ>
+    <VolumeVoxelSizeX>0.008382</VolumeVoxelSizeX>
+    <VolumeVoxelSizeY>0.008382</VolumeVoxelSizeY>
+    <VolumeVoxelSizeZ>0.008382</VolumeVoxelSizeZ>
+    <VolumeRoiSizeX>25.211958</VolumeRoiSizeX>
+    <VolumeRoiSizeY>25.211958</VolumeRoiSizeY>
+    <VolumeRoiSizeZ>15.791</VolumeRoiSizeZ>
+    <VolumeScaleToFloatMin>-4</VolumeScaleToFloatMin>
+    <VolumeScaleToFloatMax>10</VolumeScaleToFloatMax>
+    <VolumeClearOutOfRegionVoxels>true</VolumeClearOutOfRegionVoxels>
+    <VolumeRingArtifactReductionLevel>3</VolumeRingArtifactReductionLevel>
+    <BadPixelCorrFilterEnable>true</BadPixelCorrFilterEnable>
+    <MedianFilterEnable>false</MedianFilterEnable>
+    <AdditionalInfo>Number of smooth overlap Z-slices = 20</AdditionalInfo>
+    <EmptySpaceSkippingBackgroundMaskRadius>0</EmptySpaceSkippingBackgroundMaskRadius>
+    <EmptySpaceSkippingBackgroundMaskThreshold>0</EmptySpaceSkippingBackgroundMaskThreshold>
+  </Recon>
+  <ScanParameter>
+    <Voltage>290</Voltage>
+    <Current>70</Current>
+    <Power>0</Power>
+    <Focus />
+    <Pixelbinning>1</Pixelbinning>
+    <DetectorPixelX>3000</DetectorPixelX>
+    <DetectorPixelY>3000</DetectorPixelY>
+    <IntegrationTime>330</IntegrationTime>
+    <Framebinning>3</Framebinning>
+    <Capacity>1x1 1pF</Capacity>
+    <HardwarePixelBinning />
+    <MechanicalFilter>Air</MechanicalFilter>
+    <StopAndGo>false</StopAndGo>
+    <ScanFieldExtensionVertical>true</ScanFieldExtensionVertical>
+    <ScanFieldExtensionHorizontal>false</ScanFieldExtensionHorizontal>
+    <ScanFieldExtensionHorizontal4Time>false</ScanFieldExtensionHorizontal4Time>
+    <ScanFieldExtensionHorizontalShiftedObjectOrDetectorPixelX>0</ScanFieldExtensionHorizontalShiftedObjectOrDetectorPixelX>
+    <HelixMode>false</HelixMode>
+    <HelixPerStepDistanceZ>0</HelixPerStepDistanceZ>
+    <Laminography>false</Laminography>
+    <LaminographyPlanar>false</LaminographyPlanar>
+    <AdditionalInfo />
+    <ScanStart>23/05/2024 12:42:58</ScanStart>
+    <ScanEnd>23/05/2024 15:26:54</ScanEnd>
+    <ScanDuration>02:35:55</ScanDuration>
+  </ScanParameter>
+</ScanDocuPara>
