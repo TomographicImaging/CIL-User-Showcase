@@ -2,6 +2,7 @@ import sys
 sys.path.append("..")
 from LSQR import *
 from LSQR_Tikhonov_LP import *
+from LSQR_Tikhonov_MP import *
 
 from LSQRLP import *
 from LSQRMP import *
@@ -38,14 +39,14 @@ import datetime as datetime_module
 # region command line parsing
 parser = argparse.ArgumentParser("Memory Profiling Script For CGLS & LSQR")
 parser.add_argument("algorithm", help="The algorithm that will be run [Options: CGLS_LP, CGLS_MP, LSQR_LP, LSQR_MP,  \
-                    cgls_lp_tik_block, lsqr_lp_tik_block, lsqr_tik_lp", type=str)
+                    cgls_lp_tik_block, lsqr_lp_tik_block, lsqr_tik_lp, lsqr_tik_mp", type=str)
 parser.add_argument("--track-peak", help="Track the peak memory usage in a separate thread", default=False, action='store_true')
 args = parser.parse_args()
 algorithm = args.algorithm.lower()
 
 if algorithm not in ['cgls_mp', 'cgls_lp', 'lsqr_mp', 'lsqr_lp',
                      'cgls_lp_tik_block', 'lsqr_lp_tik_block',
-                     'lsqr_tik_lp'
+                     'lsqr_tik_lp', 'lsqr_tik_mp'
                      ]:
     raise ValueError()
 
@@ -98,7 +99,7 @@ initial = ig.allocate(0)
 N = 10
 itsAtATime = 1
 
-if algorithm in ['cgls_lp_tik_block', 'lsqr_lp_tik_block', 'lsqr_tik_lp']:
+if algorithm in ['cgls_lp_tik_block', 'lsqr_lp_tik_block', 'lsqr_tik_lp', 'lsqr_tik_mp']:
     L = IdentityOperator(ig)
     alpha = 0.1
     if algorithm in ['cgls_lp_tik_block', 'lsqr_lp_tik_block']:
@@ -127,7 +128,8 @@ algorithm_map = {
     'lsqr_lp': LSQR_LP,
     'cgls_lp_tik_block': CGLS_LP,
     'lsqr_lp_tik_block': LSQR_LP,
-    'lsqr_tik_lp': LSQR_Tikhonov_LP}
+    'lsqr_tik_lp': LSQR_Tikhonov_LP,
+    'lsqr_tik_mp': LSQR_Tikhonov_MP}
 
 if args.track_peak:
     pid = os.getpid()
@@ -139,7 +141,7 @@ if args.track_peak:
 if algorithm in algorithm_map:
     algorithm_class = algorithm_map[algorithm]
 
-    if algorithm == 'lsqr_tik_lp':
+    if algorithm in ['lsqr_tik_lp', 'lsqr_tik_mp']:
         solver = algorithm_class(initial=initial, operator=A, data=sandstone_noisy, alpha=alpha)
     elif algorithm in ['cgls_lp_tik_block', 'lsqr_lp_tik_block']:
         solver = algorithm_class(initial=initial, operator=operator_block, data=data_block, update_objective_interval=10)
