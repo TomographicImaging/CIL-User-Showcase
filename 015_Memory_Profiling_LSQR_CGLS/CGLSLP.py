@@ -202,6 +202,7 @@ class CGLS_LP(Algorithm):
         
         self.operator.direct(self.p, out=self.q)
         self.track_memory("22", "self.operator.direct(self.p, out=self.q)")
+     
         delta = self.q.squared_norm()
         self.track_memory("23", "")
         alpha = self.gamma/delta

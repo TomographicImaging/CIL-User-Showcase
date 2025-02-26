@@ -15,8 +15,7 @@
 #
 # Authors:
 # CIL Developers, listed at: https://github.com/TomographicImaging/CIL/blob/master/NOTICE.txt
-#
-# 
+# Maike Meier and Mariam Demir, SCD STFC
 
 from itertools import count
 from cil.optimisation.algorithms import Algorithm
@@ -45,7 +44,13 @@ class LSQR_LP(Algorithm):
 
       \min_x || A x - b ||^2_2
       
-      
+    An optional regularisation parameter alpha can be included to instead solve the Tikhonov regularised problem
+
+    .. math::
+
+      \min_x { || A x - b ||^2_2 + alpha^2 || x ||_2^2 }
+
+        
     Parameters
     ------------
     operator : Operator
@@ -54,12 +59,15 @@ class LSQR_LP(Algorithm):
         Initial guess 
     data : DataContainer in the range of the operator 
         Acquired data to reconstruct
+    alpha : (optional) non-negative float, default 0
+        Regularisation parameter that includes Tikhonov regularisation in the objective, default is zero. In case of zero the algorithm is standard LSQR.
+
 
     Reference
     ---------
     https://web.stanford.edu/group/SOL/software/lsqr/
     '''
-    def __init__(self, initial=None, operator=None, data=None, **kwargs):
+    def __init__(self, initial=None, operator=None, data=None, alpha=None, **kwargs):
         '''initialisation of the algorithm
         '''
         self.process = psutil.Process(os.getpid())
@@ -78,8 +86,14 @@ class LSQR_LP(Algorithm):
 
         if initial is None and operator is not None:
             initial = operator.domain_geometry().allocate(0)
+        if alpha is None:
+            self.regalpha = 0
+        else:
+            self.regalpha = alpha  
+
         if initial is not None and operator is not None and data is not None:
-            self.set_up(initial=initial, operator=operator, data=data) 
+            self.set_up(initial=initial, operator=operator, data=data)
+
         self.track_memory("End of init", "self.set_up(initial=initial, operator=operator, data=data)")
 
     def track_memory(self, label="", line=" "):
@@ -106,31 +120,36 @@ class LSQR_LP(Algorithm):
         self.operator = operator
         self.track_memory("4", "self.operator = operator")
 
-        self.u = data - self.operator.direct(self.x) # Forward proj?
-        self.track_memory("5", "self.u = data - self.operator.direct(self.x)")
+        self.u = self.operator.direct(self.x)
+        self.track_memory("5", "self.u = self.operator.direct(self.x)")
+        self.u.sapyb(-1, data, 1, out=self.u)
+        self.track_memory("6", "self.u.sapyb(-1, data, 1, out=self.u)")
         self.beta = self.u.norm()
-        self.track_memory("6", "self.beta = self.u.norm()")
-        self.u = self.u/self.beta
-        self.track_memory("7", "self.u = self.u/self.beta")
+        self.track_memory("7", "self.beta = self.u.norm()")
+        self.u /= self.beta
+        self.track_memory("8", "self.u /= self.beta")
         
-        self.v = self.operator.adjoint(self.u) # Backward proj?
-        self.track_memory("8", "self.v = self.operator.adjoint(self.u)")
+        self.v = self.operator.adjoint(self.u) 
+        self.track_memory("9", "self.v = self.operator.adjoint(self.u)")
         self.alpha = self.v.norm()
-        self.track_memory("9", "self.alpha = self.v.norm()")
-        self.v = self.v/self.alpha
-        self.track_memory("10", "self.v = self.v/self.alpha")
+        self.track_memory("10", "self.alpha = self.v.norm()")
+        self.v /= self.alpha
+        self.track_memory("11", "self.v = self.v/self.alpha")
 
-        self.c = 1
-        self.s = 0
-        self.track_memory("11", "self.c = 1, self.s = 0")
-
+        self.rhobar = self.alpha
         self.phibar = self.beta
-        self.track_memory("12", "self.phibar = self.beta")
         self.normr = self.beta
-        self.track_memory("13", "self.normr = self.beta")
-        
-        self.d = operator.domain_geometry().allocate(0)
-        self.track_memory("14", "self.d = operator.domain_geometry().allocate(0)")
+        self.regalphasq = self.regalpha**2
+        self.track_memory("12", "self.regalphasq = self.regalpha**2")
+
+        self.d = self.v.copy()
+        self.track_memory("13", "self.d = self.v.copy()")
+        self.tmp_range = data.geometry.allocate(None)
+        self.track_memory("14", "self.tmp_range = data.geometry.allocate(None)")
+        self.tmp_domain = self.x.geometry.allocate(None)
+        self.track_memory("15", "self.tmp_domain = self.x.geometry.allocate(None)")
+
+        self.res2 = 0
 
         self.configured = True
         log.info("%s configured", self.__class__.__name__)
@@ -156,16 +175,16 @@ class LSQR_LP(Algorithm):
                  DeprecationWarning, stacklevel=2)
         if callbacks is None:
             callbacks = [ProgressCallback(verbose=verbose)]
-        self.track_memory("15", "callbacks = [ProgressCallback(verbose=verbose)]")
+        self.track_memory("16", "callbacks = [ProgressCallback(verbose=verbose)]")
         # transform old-style callbacks into new
         callback = kwargs.get('callback', None)
-        self.track_memory("16", "callback = kwargs.get('callback', None)")
+        self.track_memory("17", "callback = kwargs.get('callback', None)")
 
         if callback is not None:
             callbacks.append(_OldCallback(callback, verbose=verbose))
         if hasattr(self, '__log_file'):
             callbacks.append(LogfileCallback(self.__log_file, verbose=verbose))
-        self.track_memory("17", "callbacks.append(_OldCallback(callback, verbose=verbose))")
+        self.track_memory("18", "callbacks.append(_OldCallback(callback, verbose=verbose))")
 
         if self.should_stop():
             print("Stop criterion has been reached.")
@@ -173,26 +192,26 @@ class LSQR_LP(Algorithm):
             warnings.warn("`run()` missing `iterations`", DeprecationWarning, stacklevel=2)
             iterations = self.max_iteration
         
-        self.track_memory("18", "iterations = self.max_iteration")
+        self.track_memory("19", "iterations = self.max_iteration")
 
         if self.iteration == -1 and self.update_objective_interval>0:
             iterations+=1
-        self.track_memory("19", "iterations+=1")
+        self.track_memory("20", "iterations+=1")
 
         # call `__next__` upto `iterations` times or until `StopIteration` is raised
         self.max_iteration = self.iteration + iterations
-        self.track_memory("20", "self.max_iteration = self.iteration + iterations")
+        self.track_memory("21", "self.max_iteration = self.iteration + iterations")
 
         iters = (count(self.iteration) if numpy.isposinf(self.max_iteration)
                  else range(self.iteration, self.max_iteration))
-        self.track_memory("21", "iters = (count(self.iteration) if numpy.isposinf(self.max_iteration) else range(self.iteration, self.max_iteration))")
+        self.track_memory("22", "iters = (count(self.iteration) if numpy.isposinf(self.max_iteration) else range(self.iteration, self.max_iteration))")
         
         for _ in zip(iters, self):
-            self.track_memory("22", "update(self)")
+            self.track_memory("23", "update(self)")
             try:
                 for callback in callbacks:
                     callback(self)
-                    self.track_memory("23", "callback(self)")
+                    self.track_memory("24", "callback(self)")
             except StopIteration:
                 break
         self.track_memory("End of run")
@@ -200,67 +219,65 @@ class LSQR_LP(Algorithm):
     def update(self):
         self.track_memory("Start of update")
         '''single iteration'''
-        # update u
-        self.u = self.operator.direct(self.v) - self.alpha * self.u
-        self.track_memory("24", "self.u = self.operator.direct(self.v) - self.alpha * self.u")
+        # Update u in GKB
+        self.operator.direct(self.v, out=self.tmp_range)
+        self.track_memory("25", "self.operator.direct(self.v, out=self.tmp_range)")
+        self.tmp_range.sapyb(1.,  self.u,-self.alpha, out=self.u)
+        self.track_memory("26", "self.tmp_range.sapyb(1.,  self.u,-self.alpha, out=self.u)")
+
         self.beta = self.u.norm()
-        self.track_memory("25", "self.beta = self.u.norm()")
-        self.u = self.u/self.beta
-        self.track_memory("26", "self.u = self.u/self.beta")
+        self.track_memory("27", "self.beta = self.u.norm()")
+        self.u /= self.beta
+        self.track_memory("28", "self.u /= self.beta")
 
-        # update scalars
-        theta = -self.s * self.alpha
-        self.track_memory("27", "theta = -self.s * self.alpha")
-        rhobar = self.c * self.alpha
-        self.track_memory("28", "rhobar = self.c * self.alpha")
-        rho = math.sqrt((rhobar**2 + self.beta**2))
-        self.track_memory("29", "rho = math.sqrt((rhobar**2 + self.beta**2))")
-
-        self.c = rhobar/rho
-        self.track_memory("30", "self.c = rhobar/rho")
-        self.s = (-1*self.beta)/rho
-        self.track_memory("31", "self.s = (-1*self.beta)/rho")
-        phi = self.c*self.phibar
-        self.track_memory("32", "phi = self.c*self.phibar")
-        self.phibar = self.s*self.phibar
-        self.track_memory("33", "self.phibar = self.s*self.phibar")
-
-        # update d
-        self.d.sapyb(-theta, self.v, 1, out=self.d)
-        self.track_memory("34", "self.d.sapyb(-theta, self.v, 1, out=self.d)")
-        self.d /= rho
-        self.track_memory("35", "self.d /= rho")
-
-        #update image x
-        self.x.sapyb(1, self.d, phi, out=self.x)
-        self.track_memory("36", "self.x.sapyb(1, self.d, phi, out=self.x)")
-
-        # estimate residual norm
-        self.normr = abs(self.s) * self.normr
-        self.track_memory("37", "self.normr = abs(self.s) * self.normr")
-
-        # update v
-        self.v = self.operator.adjoint(self.u) - self.beta * self.v
-        self.track_memory("38", "self.v = self.operator.adjoint(self.u) - self.beta * self.v")
+        # Update v in GKB
+        self.operator.adjoint(self.u, out=self.tmp_domain)
+        self.track_memory("29", "self.operator.adjoint(self.u, out=self.tmp_domain)")
+        self.v.sapyb(-self.beta, self.tmp_domain, 1., out=self.v)
+        self.track_memory("30", "self.v.sapyb(-self.beta, self.tmp_domain, 1., out=self.v)")
         self.alpha = self.v.norm()
-        self.track_memory("39", "self.alpha = self.v.norm()")
-        self.v = self.v/self.alpha
-        self.track_memory("End of update", "self.v = self.v/self.alpha")
+        self.track_memory("31", "self.alpha = self.v.norm()")
+        self.v /= self.alpha
+        self.track_memory("32", "self.v /= self.alpha")
 
+        # Eliminate diagonal from regularisation
+        if self.regalphasq > 0:
+            rhobar1 = math.sqrt(self.rhobar * self.rhobar + self.regalphasq)
+            c1 = self.rhobar / rhobar1
+            s1 = self.regalpha / rhobar1
+            psi = s1 * self.phibar
+            self.phibar = c1 * self.phibar
+            self.track_memory("33", "self.phibar = c1 * self.phibar")
+        else:
+            rhobar1 = self.rhobar
+            psi = 0
+            self.track_memory("33", "rhobar1 = self.rhobar, psi = 0")
+
+        # Eliminate lower bidiagonal part
+        rho = math.sqrt(rhobar1 ** 2 + self.beta ** 2)
+        c = rhobar1 / rho
+        s = self.beta / rho
+        theta = s * self.alpha
+        self.rhobar = -c * self.alpha
+        phi = c * self.phibar
+        self.phibar = s * self.phibar
+        self.track_memory("34", "self.phibar = s * self.phibar")
+
+        # Update image x
+        self.x.sapyb(1, self.d, phi/rho, out=self.x)
+        self.track_memory("35", "self.x.sapyb(1, self.d, phi/rho, out=self.x)")
+
+        # Update d
+        self.d.sapyb(-theta/rho, self.v, 1, out=self.d)
+        self.track_memory("36", "self.d.sapyb(-theta/rho, self.v, 1, out=self.d)")
+
+        # Estimate residual norm 
+        self.res2 += psi ** 2
+        self.normr = math.sqrt(self.phibar ** 2 + self.res2)
+
+        self.track_memory("End of update", "self.normr = math.sqrt(self.phibar ** 2 + self.res2)")
 
     def update_objective(self):
         if self.normr is numpy.nan:
             raise StopIteration()
-        self.loss.append(self.normr)
-
-    def should_stop(self): # TODO: Deprecated, remove when CGLS tolerance is removed
-        return self.flag() or super().should_stop()
-
-    def flag(self): # TODO: Deprecated, remove when CGLS tolerance is removed
-        flag = False
-
-        if flag:
-            self.update_objective()
-            print('Tolerance is reached: {}'.format(self.tolerance))
-
-        return flag
+        self.loss.append(self.normr**2)

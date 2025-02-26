@@ -15,8 +15,7 @@
 #
 # Authors:
 # CIL Developers, listed at: https://github.com/TomographicImaging/CIL/blob/master/NOTICE.txt
-#
-# 
+# Maike Meier and Mariam Demir, SCD STFC
 
 from itertools import count
 from cil.optimisation.algorithms import Algorithm
@@ -44,7 +43,13 @@ class LSQR_MP(Algorithm):
 
       \min_x || A x - b ||^2_2
       
-      
+    An optional regularisation parameter alpha can be included to instead solve the Tikhonov regularised problem
+
+    .. math::
+
+      \min_x { || A x - b ||^2_2 + alpha^2 || x ||_2^2 }
+
+        
     Parameters
     ------------
     operator : Operator
@@ -53,16 +58,18 @@ class LSQR_MP(Algorithm):
         Initial guess 
     data : DataContainer in the range of the operator 
         Acquired data to reconstruct
+    alpha : (optional) non-negative float, default 0
+        Regularisation parameter that includes Tikhonov regularisation in the objective, default is zero. In case of zero the algorithm is standard LSQR.
+
 
     Reference
     ---------
     https://web.stanford.edu/group/SOL/software/lsqr/
     '''
     @profile
-    def __init__(self, initial=None, operator=None, data=None, **kwargs):
+    def __init__(self, initial=None, operator=None, data=None, alpha=None, **kwargs):
         '''initialisation of the algorithm
         '''
-
         #We are deprecating tolerance 
         self.tolerance=kwargs.pop("tolerance", None)
         if self.tolerance is not None:
@@ -74,6 +81,11 @@ class LSQR_MP(Algorithm):
 
         if initial is None and operator is not None:
             initial = operator.domain_geometry().allocate(0)
+        if alpha is None:
+            self.regalpha = 0
+        else:
+            self.regalpha = alpha 
+
         if initial is not None and operator is not None and data is not None:
             self.set_up(initial=initial, operator=operator, data=data) 
 
@@ -92,28 +104,35 @@ class LSQR_MP(Algorithm):
         '''
         
         log.info("%s setting up", self.__class__.__name__)
-        self.x = initial.copy()
+        self.x = initial.copy() #1 domain
         self.operator = operator
 
-        self.u = data - self.operator.direct(self.x)
-        self.beta = self.u.norm()
-        self.u = self.u/self.beta
+        # Initialise Golub-Kahan bidiagonalisation (GKB)
         
-        self.v = self.operator.adjoint(self.u)
+        #self.u = data - self.operator.direct(self.x)
+        self.u = self.operator.direct(self.x) #1 range 
+        self.u.sapyb(-1, data, 1, out=self.u)
+        self.beta = self.u.norm()
+        self.u /= self.beta
+        
+        self.v = self.operator.adjoint(self.u) #2 domain 
         self.alpha = self.v.norm()
-        self.v = self.v/self.alpha
+        self.v /= self.alpha
 
-        self.c = 1
-        self.s = 0
-
+        self.rhobar = self.alpha
         self.phibar = self.beta
         self.normr = self.beta
+        self.regalphasq = self.regalpha**2
+
+        self.d = self.v.copy() #3 domain 
+        self.tmp_range = data.geometry.allocate(None) #2 range
+        self.tmp_domain = self.x.geometry.allocate(None) #4 domain
         
-        self.d = operator.domain_geometry().allocate(0)
+        self.res2 = 0
 
         self.configured = True
         log.info("%s configured", self.__class__.__name__)
-
+        
     @profile
     def run(self, iterations=None, callbacks: Optional[List[Callback]]=None, verbose=1, **kwargs):
         r"""run upto :code:`iterations` with callbacks/logging.
@@ -166,53 +185,54 @@ class LSQR_MP(Algorithm):
             except StopIteration:
                 break
 
+    # @profile
     def update(self):
         '''single iteration'''
 
-        # update u
-        self.u = self.operator.direct(self.v) - self.alpha * self.u
+        # Update u in GKB
+        self.operator.direct(self.v, out=self.tmp_range)
+        self.tmp_range.sapyb(1.,  self.u,-self.alpha, out=self.u)
         self.beta = self.u.norm()
-        self.u = self.u/self.beta
+        self.u /= self.beta
 
-        # update scalars
-        theta = -self.s * self.alpha
-        rhobar = self.c * self.alpha
-        rho = math.sqrt((rhobar**2 + self.beta**2))
-
-        self.c = rhobar/rho
-        self.s = (-1*self.beta)/rho
-        phi = self.c*self.phibar
-        self.phibar = self.s*self.phibar
-
-        # update d
-        self.d.sapyb(-theta, self.v, 1, out=self.d)
-        self.d /= rho
-
-        #update image x
-        self.x.sapyb(1, self.d, phi, out=self.x)
-
-        # estimate residual norm
-        self.normr = abs(self.s) * self.normr
-
-        # update v
-        self.v = self.operator.adjoint(self.u) - self.beta * self.v
+        # Update v in GKB
+        self.operator.adjoint(self.u, out=self.tmp_domain)
+        self.v.sapyb(-self.beta, self.tmp_domain, 1., out=self.v)
         self.alpha = self.v.norm()
-        self.v = self.v/self.alpha
+        self.v /= self.alpha
+ 
+        # Eliminate diagonal from regularisation
+        if self.regalphasq > 0:
+            rhobar1 = math.sqrt(self.rhobar * self.rhobar + self.regalphasq)
+            c1 = self.rhobar / rhobar1
+            s1 = self.regalpha / rhobar1
+            psi = s1 * self.phibar
+            self.phibar = c1 * self.phibar
+        else:
+            rhobar1 = self.rhobar
+            psi = 0
 
+        # Eliminate lower bidiagonal part
+        rho = math.sqrt(rhobar1 ** 2 + self.beta ** 2)
+        c = rhobar1 / rho
+        s = self.beta / rho
+        theta = s * self.alpha
+        self.rhobar = -c * self.alpha
+        phi = c * self.phibar
+        self.phibar = s * self.phibar
+
+        # Update image x
+        self.x.sapyb(1, self.d, phi/rho, out=self.x)
+
+        # Update d
+        self.d.sapyb(-theta/rho, self.v, 1, out=self.d)
+
+        # Estimate residual norm 
+        self.res2 += psi ** 2
+        self.normr = math.sqrt(self.phibar ** 2 + self.res2)
+        
 
     def update_objective(self):
         if self.normr is numpy.nan:
             raise StopIteration()
-        self.loss.append(self.normr)
-
-    def should_stop(self): # TODO: Deprecated, remove when CGLS tolerance is removed
-        return self.flag() or super().should_stop()
-
-    def flag(self): # TODO: Deprecated, remove when CGLS tolerance is removed
-        flag = False
-
-        if flag:
-            self.update_objective()
-            print('Tolerance is reached: {}'.format(self.tolerance))
-
-        return flag
+        self.loss.append(self.normr**2)

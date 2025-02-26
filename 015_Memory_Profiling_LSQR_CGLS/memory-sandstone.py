@@ -1,8 +1,6 @@
 import sys
 sys.path.append("..")
 from LSQR import *
-from LSQR_Tikhonov_LP import *
-from LSQR_Tikhonov_MP import *
 
 from LSQRLP import *
 from LSQRMP import *
@@ -36,16 +34,18 @@ import time
 from pysnooper import pycompat
 import datetime as datetime_module
 
+
 # region command line parsing
 parser = argparse.ArgumentParser("Memory Profiling Script For CGLS & LSQR")
 parser.add_argument("algorithm", help="The algorithm that will be run [Options: CGLS_LP, CGLS_MP, LSQR_LP, LSQR_MP,  \
-                    cgls_lp_tik_block, lsqr_lp_tik_block, lsqr_tik_lp, lsqr_tik_mp", type=str)
+                    cgls_lp_tik_block, 'cgls_mp_tik_block', lsqr_lp_tik_block, lsqr_tik_lp, lsqr_tik_mp", type=str)
 parser.add_argument("--track-peak", help="Track the peak memory usage in a separate thread", default=False, action='store_true')
 args = parser.parse_args()
 algorithm = args.algorithm.lower()
 
 if algorithm not in ['cgls_mp', 'cgls_lp', 'lsqr_mp', 'lsqr_lp',
-                     'cgls_lp_tik_block', 'lsqr_lp_tik_block',
+                     'cgls_lp_tik_block', 'cgls_mp_tik_block',
+                     'lsqr_lp_tik_block', 'lsqr_mp_tik_block',
                      'lsqr_tik_lp', 'lsqr_tik_mp'
                      ]:
     raise ValueError()
@@ -99,14 +99,17 @@ initial = ig.allocate(0)
 N = 10
 itsAtATime = 1
 
-if algorithm in ['cgls_lp_tik_block', 'lsqr_lp_tik_block', 'lsqr_tik_lp', 'lsqr_tik_mp']:
+
+if algorithm in ['cgls_lp_tik_block', 'cgls_mp_tik_block', 'lsqr_lp_tik_block', 'lsqr_mp_tik_block', 'lsqr_tik_lp', 'lsqr_tik_mp']:
     L = IdentityOperator(ig)
     alpha = 0.1
-    if algorithm in ['cgls_lp_tik_block', 'lsqr_lp_tik_block']:
+    if algorithm in ['cgls_lp_tik_block', 'cgls_mp_tik_block', 'lsqr_lp_tik_block', 'lsqr_mp_tik_block']:
         operator_block =  BlockOperator(A, alpha*L)
         zero_data = L.range.allocate(0)
         data_block = BlockDataContainer(sandstone_noisy, zero_data)
+     
 # endregion
+
 
 def psutil_track(pid, stop):
     process = psutil.Process(pid)    
@@ -127,9 +130,11 @@ algorithm_map = {
     'lsqr_mp': LSQR_MP,
     'lsqr_lp': LSQR_LP,
     'cgls_lp_tik_block': CGLS_LP,
+    'cgls_mp_tik_block': CGLS_MP,
     'lsqr_lp_tik_block': LSQR_LP,
-    'lsqr_tik_lp': LSQR_Tikhonov_LP,
-    'lsqr_tik_mp': LSQR_Tikhonov_MP}
+    'lsqr_mp_tik_block': LSQR_MP,
+    'lsqr_tik_lp': LSQR_LP,
+    'lsqr_tik_mp': LSQR_MP}
 
 if args.track_peak:
     pid = os.getpid()
@@ -142,12 +147,12 @@ if algorithm in algorithm_map:
     algorithm_class = algorithm_map[algorithm]
 
     if algorithm in ['lsqr_tik_lp', 'lsqr_tik_mp']:
-        solver = algorithm_class(initial=initial, operator=A, data=sandstone_noisy, alpha=alpha)
-    elif algorithm in ['cgls_lp_tik_block', 'lsqr_lp_tik_block']:
-        solver = algorithm_class(initial=initial, operator=operator_block, data=data_block, update_objective_interval=10)
+        solver = algorithm_class(initial=initial, operator=A, data=sandstone_noisy, alpha=alpha) # Tik: alpha != None
+    elif algorithm in ['cgls_lp_tik_block', 'cgls_mp_tik_block', 'lsqr_lp_tik_block', 'lsqr_mp_tik_block']:
+        solver = algorithm_class(initial=initial, operator=operator_block, data=data_block)
     else:
         solver = algorithm_class(initial=initial, operator=A, data=sandstone_noisy)
-    
+
     for ii in range(N):
         print(f"run {ii+1}")
         solver.run(itsAtATime, verbose=False)
