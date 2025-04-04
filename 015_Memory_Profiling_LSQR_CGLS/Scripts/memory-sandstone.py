@@ -1,6 +1,9 @@
 import sys
-sys.path.append("..")
-from LSQR import *
+
+import psutil
+sys.path.append("./Algorithms")
+
+# from LSQR import *
 
 from LSQRLP import *
 from LSQRMP import *
@@ -9,14 +12,12 @@ from CGLSLP import *
 from CGLSMP import *
 
 # CIL core components needed
-from cil.io import TIFFStackReader
 from cil.processors import Normaliser, TransmissionAbsorptionConverter, Padder, CentreOfRotationCorrector
-from cil.framework import ImageGeometry, AcquisitionGeometry, AcquisitionData, BlockDataContainer
+from cil.framework import AcquisitionGeometry, AcquisitionData, BlockDataContainer
 
 # CIL optimisation algorithms and linear operators
-from cil.optimisation.algorithms import CGLS
-from cil.optimisation.operators import BlockOperator, GradientOperator, IdentityOperator, FiniteDifferenceOperator
-from cil.optimisation.utilities.callbacks import TextProgressCallback
+# from cil.optimisation.algorithms import CGLS
+from cil.optimisation.operators import BlockOperator, IdentityOperator
 
 # CIL example synthetic test image
 from cil.utilities import dataexample
@@ -31,7 +32,6 @@ import os
 import argparse
 from threading import Event, Thread
 import time
-from pysnooper import pycompat
 import datetime as datetime_module
 
 
@@ -55,8 +55,8 @@ if args.track_peak:
 # endregion
 
 # region Setting up the data:
-dataexample.SANDSTONE.download_data(data_dir='.', prompt=False)
-datapath = './sandstone'
+dataexample.SANDSTONE.download_data(data_dir='..', prompt=False)
+datapath = '../sandstone'
 filename = "slice_0270_data.mat"
 padsize = 600
 
@@ -116,10 +116,12 @@ def psutil_track(pid, stop):
     while not stop.is_set() and process.is_running():
         try:
             mem_info = process.memory_info()
-            timestamp = pycompat.time_isoformat(
-                datetime_module.datetime.now().time(),
-                timespec='microseconds')
-            print(f"\nMemory Usage Log (Time, Memory in MB): {timestamp}, {mem_info.rss/(1024 * 1024):.2f} MB")
+            # timestamp = pycompat.time_isoformat(
+            #     datetime_module.datetime.now().time(),
+            #     timespec='microseconds')
+            timestamp = datetime_module.datetime.now().time()
+
+            print(f"Memory Usage Log (Time, Memory in MB): {timestamp}, {mem_info.rss/(1024 * 1024):.2f} MB\n")
             time.sleep(0.01) #0.01
         except psutil.NoSuchProcess:
             break

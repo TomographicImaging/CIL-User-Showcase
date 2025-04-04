@@ -141,7 +141,6 @@ class LSQR(Algorithm):
         self.v.sapyb(-self.beta, self.tmp_domain, 1., out=self.v)
         self.alpha = self.v.norm()
         self.v /= self.alpha
-        print(self.alpha)
 
         # Eliminate diagonal from regularisation
         if self.regalphasq > 0:

@@ -99,7 +99,7 @@ class LSQR_LP(Algorithm):
     def track_memory(self, label="", line=" "):
         """Print memory usage with a custom label."""
         mem_info = self.process.memory_info().rss / (1024 * 1024)  # Memory in MB
-        print(f"{label} | Memory Usage: {mem_info:.2f} MB | line: {line}")
+        print(f"{label} | Memory Usage: {mem_info:.2f} MB | line: {line}\n")
 
     def set_up(self, initial, operator, data):
         r'''Initialisation of the algorithm
