@@ -257,6 +257,22 @@ def plot_mem(dfs, algNms, norm=False, linestyles=("-", "--", "--")):
     plt.legend()
     plt.show()
 
+# Prints line profiling output of only the specified run method, e.g. 'run 1'
+def print_output_subset(output, method_label):
+    lst_output = output.stdout.splitlines()
+    method = method_label.split()[0]
+    print_line = False
+    for line in lst_output:
+        if line == method_label:
+            print_line = True
+
+        if print_line:
+            print(line)
+
+        if f"End of {method}" in line:
+            print_line = False
+
+    return
 
 # Function for returning the time, residual & relative error of each iteration
 def timed_iterations(dataset, A, sino_ground_truth, recon_ground_truth, padsize, algorithm, iterations, itsAtATime):
