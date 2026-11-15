@@ -1,0 +1,45 @@
+{
+  "repositories": [
+    {
+      "path": ".",
+      "url": "https://github.com/PaPieta/fact-gs.git",
+      "commit": "9b95ea9370055d9caf148899775173a3bdfe6d61"
+    },
+    {
+      "path": "fact_gs/submodules/TIGRE",
+      "commit": "6b3e8313c52df99aef06f6315c9e61e381e73af6",
+      "url": "https://github.com/CERN/TIGRE"
+    },
+    {
+      "path": "fact_gs/submodules/fused_3d_tv",
+      "commit": "9d8c5dfa97da7cf2c05c131649abd83f0a8f2f62",
+      "url": "https://github.com/PaPieta/fused-3d-tv"
+    },
+    {
+      "path": "fact_gs/submodules/fused_ssim",
+      "commit": "a7c48d6dd7ac6dc39a7958c7c4452e0b10418f38",
+      "url": "https://github.com/rahul-goel/fused-ssim"
+    },
+    {
+      "path": "fact_gs/submodules/glm",
+      "commit": "e7970a8b26732f1b0df9690f7180546f8c30e48e",
+      "url": "https://github.com/g-truc/glm"
+    },
+    {
+      "path": "fact_gs/submodules/gs_ct_rasterizer",
+      "commit": "a8a3dbdca14534d7725c7a0efc8fa89a1e705257",
+      "url": "https://github.com/PaPieta/gs-ct-rasterizer"
+    },
+    {
+      "path": "fact_gs/submodules/gs_voxelizer",
+      "commit": "ed0082cf9fe9433fbfbfd3cd5f1ed339379114f6",
+      "url": "https://github.com/PaPieta/gs-voxelizer"
+    },
+    {
+      "path": "fact_gs/submodules/simple_knn",
+      "commit": "60f461f4a56b7967e5d8045bf92f8c33f36976d0",
+      "url": "https://github.com/camenduru/simple-knn"
+    }
+  ],
+  "patch": "usb_hooks.patch"
+}

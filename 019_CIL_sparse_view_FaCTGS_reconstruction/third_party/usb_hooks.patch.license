@@ -1,0 +1,13 @@
+SPDX-FileCopyrightText: 2026 Yue Jiaming
+SPDX-License-Identifier: MIT
+
+This declaration covers Yue Jiaming's original USB integration changes
+in usb_hooks.patch. Upstream code reproduced as patch context or removed
+lines retains its original copyright and license terms; this declaration
+does not relicense that code.
+
+The patch targets FaCT-GS commit
+9b95ea9370055d9caf148899775173a3bdfe6d61:
+https://github.com/PaPieta/fact-gs/blob/9b95ea9370055d9caf148899775173a3bdfe6d61/LICENSE.md
+
+See ../LICENSE.txt for the MIT license text for the original changes.
