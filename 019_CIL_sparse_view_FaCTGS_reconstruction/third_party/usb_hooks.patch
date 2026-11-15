@@ -1,0 +1,52 @@
+--- a/train_recon.py
++++ b/train_recon.py
+@@ -42,7 +42,7 @@
+         optimize(config)
+ 
+ 
+-def optimize(config, profiler=None):
++def optimize(config, profiler=None, scene_reader=None, report_callback=None):
+     """Run the full reconstruction optimization loop.
+ 
+     Args:
+@@ -50,7 +50,9 @@
+         profiler: Optional torch profiler context returned by ``setup_profiler``.
+     """
+     model_args, optim_args, eval_args = config.model, config.optim, config.eval
+-    scene = SceneRecon(model_args, shuffle=False)
++    # USB showcase: explicit hooks; default callers retain upstream behavior.
++    scene = SceneRecon(model_args, shuffle=False, scene_reader=scene_reader)
++    report_callback = report_callback or log_training_status
+     training_time_seconds = 0.0
+     eval_and_save_time_seconds = 0.0
+ 
+@@ -224,7 +226,7 @@
+             time_limit_seconds = getattr(optim_args, "training_time_limit_seconds", 0.0)
+             time_limit_hit = time_limit_seconds > 0 and training_time_seconds >= time_limit_seconds
+ 
+-            eval_metrics = log_training_status(
++            eval_metrics = report_callback(
+                 step,
+                 metrics,
+                 training_time_seconds,
+--- a/fact_gs/r2_gaussian/dataset/__init__.py
++++ b/fact_gs/r2_gaussian/dataset/__init__.py
+@@ -29,6 +29,7 @@
+         self,
+         model_args,
+         shuffle=True,
++        scene_reader=None,  # USB showcase: optional explicit dataset reader.
+     ):
+         self.model_path = model_args.model_path
+ 
+@@ -36,7 +37,9 @@
+         self.test_cameras = {}
+ 
+         # Read scene info
+-        if osp.exists(osp.join(model_args.data_source_path, "meta_data.json")):
++        if scene_reader is not None:
++            scene_info = scene_reader(model_args.data_source_path, model_args.eval)
++        elif osp.exists(osp.join(model_args.data_source_path, "meta_data.json")):
+             # Blender format
+             scene_info = sceneLoadTypeCallbacks["Blender"](
+                 model_args.data_source_path,

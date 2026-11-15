@@ -1,0 +1,17 @@
+# SPDX-FileCopyrightText: 2026 Yue Jiaming
+# SPDX-License-Identifier: MIT
+
+__pycache__/
+.ipynb_checkpoints/
+/runs/
+/runs_step_by_step/
+/dataset/
+/code/
+*.so
+*.o
+*.egg-info/
+build/
+dist/
+USB_CT_FDK_SIRT_FaCTGS_zh*
+/runs_notebook/
+/third_party/fact-gs/
