@@ -1,0 +1,6 @@
+SPDX-FileCopyrightText: 2026 Yue Jiaming
+SPDX-License-Identifier: MIT
+
+This declaration covers the source manifest SOURCES.json only.
+The repositories identified in the manifest retain their own licenses.
+See ../LICENSE.txt for the MIT license text.
